@@ -20,31 +20,67 @@ Maze.prototype.initGrid = function() {
     }
 };
 
+Maze.prototype.generate = function() {
+    console.log('Maze:generate:start');
+    this.carvePassageFrom(0, 0);
+    console.log('Maze:generate:end');
+};
+
+Maze.prototype.carvePassageFrom = function(x, y) {
+    var directions = _.shuffle(Maze.List);
+    _.each(directions, function(direction) {
+        var nx = x + Maze.dx[direction],
+            ny = y + Maze.dy[direction];
+
+        if (ny >= 0 && ny < this.grid.length &&
+            nx >= 0 && nx < this.grid[ny].length &&
+            this.grid[ny][nx] === 0) {
+            this.grid[y][x] |= direction;
+            this.grid[ny][nx] |= Maze.opposite[direction];
+            this.carvePassageFrom(nx, ny);
+        }
+    }, this);
+};
+
 Maze.N = 1;
 Maze.S = 2;
 Maze.E = 4;
 Maze.W = 8;
-Maze.opposite = {
-  1: 2,
-  2: 1,
-  4: 8,
-  8: 4
+Maze.List = [1, 2, 4, 8];
+Maze.dx = {
+    1: 0,
+    2: 0,
+    4: 1,
+    8: -1
 };
-Maze.prototype.isNorth = function(x, y, z) {
+Maze.dy = {
+    1: -1,
+    2: 1,
+    4: 0,
+    8: 0
+};
+Maze.opposite = {
+    1: 2,
+    2: 1,
+    4: 8,
+    8: 4
+};
+Maze.prototype.isNorth = function(x, y) {
     return (this.grid[y][x] & Maze.N) === Maze.N;
 };
-Maze.prototype.isSouth = function(x, y, z) {
+Maze.prototype.isSouth = function(x, y) {
     return (this.grid[y][x] & Maze.S) === Maze.S;
 };
-Maze.prototype.isEast = function(x, y, z) {
+Maze.prototype.isEast = function(x, y) {
     return (this.grid[y][x] & Maze.E) === Maze.E;
 };
-Maze.prototype.isWest = function(x, y, z) {
+Maze.prototype.isWest = function(x, y) {
     return (this.grid[y][x] & Maze.W) === Maze.W;
 };
-Maze.prototype.rand = function(n) {
-    return Math.floor(Math.random() * n);
-};
+Maze.prototype.isDirection = function(x, y, direction) {
+    return (this.grid[y][x] & direction) === direction;
+}
+
 
 
 
