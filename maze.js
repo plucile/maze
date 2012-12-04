@@ -23,6 +23,8 @@ Maze.prototype.initGrid = function() {
 Maze.prototype.generate = function() {
     console.log('Maze:generate:start');
     this.carvePassageFrom(0, 0);
+    this.grid[0][0] |= Maze.W;
+    this.grid[this.height - 1][this.width - 1] |= Maze.E;
     console.log('Maze:generate:end');
 };
 
@@ -77,40 +79,43 @@ Maze.prototype.isEast = function(x, y) {
 Maze.prototype.isWest = function(x, y) {
     return (this.grid[y][x] & Maze.W) === Maze.W;
 };
-Maze.prototype.isDirection = function(x, y, direction) {
-    return (this.grid[y][x] & direction) === direction;
-}
-
-
-
-
-
-Maze.prototype.createCell = function(index) {
-    var el = document.createElement('div');
-    el.setAttribute('id', 'cell_' + index);
-    return el;
+Maze.prototype.isOpenSide = function(cell, direction) {
+    return (cell & direction) === direction;
 };
 
-Maze.prototype.createRow = function(size, index) {
-    var row = document.createElement('div');
-    row.setAttribute('id', 'row_' + index);
-    _(size).times(function(index) {
-        var cell = createCell(index);
-        row.appendChild(cell);
-    });
-    return row;
+
+
+
+
+Maze.prototype.createCell = function(cell) {
+    var cellEl = $('<div>').addClass('cell');
+    if (this.isOpenSide(cell, Maze.N)) {
+        cellEl.addClass('n');
+    }
+    if (this.isOpenSide(cell, Maze.S)) {
+        cellEl.addClass('s');
+    }
+    if (this.isOpenSide(cell, Maze.E)) {
+        cellEl.addClass('e');
+    }
+    if (this.isOpenSide(cell, Maze.W)) {
+        cellEl.addClass('w');
+    }
+    return cellEl.get(0);
 };
 
-Maze.prototype.createGrid = function(size) {
-    var grid = document.createElement('div');
-    grid.setAttribute('id', 'grid');
-    _(size).times(function(index) {
-        var row = createRow(size, index);
-        grid.appendChild(row);
-    });
-    return grid;
+Maze.prototype.createRow = function(row) {
+    var rowEl = $('<div>').addClass('row');
+    var cells = _.map(row, this.createCell, this);
+    return rowEl.append(cells).get(0);
 };
 
 Maze.prototype.render = function() {
-    console.log('Maze:render');
+    var gridEl = $('<div>').attr('id', 'grid');
+    var elements = _.map(this.grid, this.createRow, this);
+    this.el = gridEl.append(elements).get(0);
 };
+
+
+
+

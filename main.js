@@ -7,8 +7,9 @@
         var height = parseInt($('#height').val(), 10);
         maze = new Maze(width, height);
         maze.generate();
-        // render();
-        // $('#content').html(maze.el);
+        maze.render();
+        $('#content').html(maze.el);
+        window.maze = maze;
     });
 
 })(document);
