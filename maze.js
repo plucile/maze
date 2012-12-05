@@ -7,6 +7,50 @@ var Maze = window.Maze = function(width, height) {
     this.initGrid();
 };
 
+Maze.N = 1;
+Maze.S = 2;
+Maze.E = 4;
+Maze.W = 8;
+Maze.Breadcrumb = 16;
+Maze.List = [1, 2, 4, 8];
+Maze.dx = {
+    1: 0,
+    2: 0,
+    4: 1,
+    8: -1
+};
+Maze.dy = {
+    1: -1,
+    2: 1,
+    4: 0,
+    8: 0
+};
+Maze.opposite = {
+    1: 2,
+    2: 1,
+    4: 8,
+    8: 4
+};
+Maze.prototype.isNorth = function(x, y) {
+    return (this.grid[y][x] & Maze.N) === Maze.N;
+};
+Maze.prototype.isSouth = function(x, y) {
+    return (this.grid[y][x] & Maze.S) === Maze.S;
+};
+Maze.prototype.isEast = function(x, y) {
+    return (this.grid[y][x] & Maze.E) === Maze.E;
+};
+Maze.prototype.isWest = function(x, y) {
+    return (this.grid[y][x] & Maze.W) === Maze.W;
+};
+Maze.prototype.isOpenSide = function(cell, direction) {
+    return (cell & direction) === direction;
+};
+Maze.prototype.isBreadcrumb = function(cell) {
+    return (cell & Maze.Breadcrumb) === Maze.Breadcrumb;
+}
+
+
 Maze.prototype.initGrid = function() {
     // Genererate maze data structure 
     var width = this.width,
@@ -44,49 +88,6 @@ Maze.prototype.carvePassageFrom = function(x, y) {
     }, this);
 };
 
-Maze.N = 1;
-Maze.S = 2;
-Maze.E = 4;
-Maze.W = 8;
-Maze.List = [1, 2, 4, 8];
-Maze.dx = {
-    1: 0,
-    2: 0,
-    4: 1,
-    8: -1
-};
-Maze.dy = {
-    1: -1,
-    2: 1,
-    4: 0,
-    8: 0
-};
-Maze.opposite = {
-    1: 2,
-    2: 1,
-    4: 8,
-    8: 4
-};
-Maze.prototype.isNorth = function(x, y) {
-    return (this.grid[y][x] & Maze.N) === Maze.N;
-};
-Maze.prototype.isSouth = function(x, y) {
-    return (this.grid[y][x] & Maze.S) === Maze.S;
-};
-Maze.prototype.isEast = function(x, y) {
-    return (this.grid[y][x] & Maze.E) === Maze.E;
-};
-Maze.prototype.isWest = function(x, y) {
-    return (this.grid[y][x] & Maze.W) === Maze.W;
-};
-Maze.prototype.isOpenSide = function(cell, direction) {
-    return (cell & direction) === direction;
-};
-
-
-
-
-
 Maze.prototype.createCell = function(cell) {
     var cellEl = $('<div>').addClass('cell');
     if (this.isOpenSide(cell, Maze.N)) {
@@ -100,6 +101,9 @@ Maze.prototype.createCell = function(cell) {
     }
     if (this.isOpenSide(cell, Maze.W)) {
         cellEl.addClass('w');
+    }
+    if (this.isBreadcrumb(cell, Maze.Breadcrumb)) {
+        cellEl.addClass('bc');
     }
     return cellEl.get(0);
 };
@@ -117,5 +121,46 @@ Maze.prototype.render = function() {
 };
 
 
+Maze.prototype.resolve = function() {
+    var x = 0,
+        y = 0,
+        solved = 0,
+        originDirection = Maze.W;
+    this.grid[y][x] |= Maze.Breadcrumb;
 
+    var isFinish = function(x, y) {
+        if (y !== (this.grid.length-1)) return false;
+        if (x !== (this.grid[y].length-1)) return false;
+        return true;
+    };
 
+    while (!isFinish(x, y)) {
+        var directions = this.directionToTry(originDirection);
+        _.every(directions, function(direction) {
+            var cell = this.grid[y][x];
+            if (this.isOpenSide(cell, direction)) {
+                x += Maze.dx[direction];
+                y += Maze.dy[direction];
+                originDirection = Maze.opposite[direction];
+                this.grid[y][x] |= Maze.Breadcrumb;
+                this.render();
+                $('#content').html(this.el);
+                return false; // Break every iteration
+            }
+            return true;
+        }, this);
+    }
+}
+
+Maze.prototype.directionToTry = function(lastOriginDirection) {
+    switch (lastOriginDirection) {
+        case Maze.N:
+            return [Maze.W, Maze.S, Maze.E, Maze.N];
+        case Maze.W:
+            return [Maze.S, Maze.E, Maze.N, Maze.W];
+        case Maze.S:
+            return [Maze.E, Maze.N, Maze.W, Maze.S];
+        case Maze.E:
+            return [Maze.N, Maze.W, Maze.S, Maze.E];
+    }
+}
