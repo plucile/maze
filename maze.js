@@ -128,10 +128,19 @@ Maze.prototype.resolve = function() {
         originDirection = Maze.W;
     this.grid[y][x] |= Maze.Breadcrumb;
 
+    // var isFinish = function(x, y) {
+    //     if (y !== (this.grid.length-1)) return false;
+    //     if (x !== (this.grid[y].length-1)) return false;
+    //     return true;
+    // };
+
     var isFinish = function(x, y) {
-        if (y !== (this.grid.length-1)) return false;
-        if (x !== (this.grid[y].length-1)) return false;
-        return true;
+        if (y !== (this.grid.length-1) && x !== (this.grid[y].length-1)) {
+            return true;
+        }
+        else {
+            return false;
+        }
     };
 
     while (!isFinish(x, y)) {
