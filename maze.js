@@ -1,9 +1,10 @@
-var Maze = window.Maze = function(width, height) {
+var Maze = window.Maze = function(width, height, el) {
     if (!(this instanceof Maze)) {
         return new Maze(options);
     }
     this.width = width;
     this.height = height;
+    this.container = $(el);
     this.initGrid();
 };
 
@@ -70,6 +71,7 @@ Maze.prototype.generate = function() {
     this.grid[0][0] |= Maze.W;
     this.grid[this.height - 1][this.width - 1] |= Maze.E;
     console.log('Maze:generate:end');
+    this.render();
 };
 
 Maze.prototype.carvePassageFrom = function(x, y) {
@@ -115,17 +117,21 @@ Maze.prototype.createRow = function(row) {
 };
 
 Maze.prototype.render = function() {
+    console.log('Maze:render');
     var gridEl = $('<div>').attr('id', 'grid');
     var elements = _.map(this.grid, this.createRow, this);
-    this.el = gridEl.append(elements).get(0);
+    gridEl.append(elements).get(0);
+    this.container.html(gridEl);
 };
 
 
-Maze.prototype.resolve = function() {
+
+Maze.prototype.solve = function() {
     var x = 0,
         y = 0,
         solved = 0,
-        originDirection = Maze.W;
+        originDirection = Maze.W,
+        wd = 100;
     this.grid[y][x] |= Maze.Breadcrumb;
 
     // var isFinish = function(x, y) {
@@ -134,18 +140,14 @@ Maze.prototype.resolve = function() {
     //     return true;
     // };
 
-    var isFinish = function(x, y) {
-        if (y !== (this.grid.length-1) && x !== (this.grid[y].length-1)) {
-            return true;
+    while (!this.isFinish(x, y)) {
+        wd--;
+        if (wd === 0) {
+            debugger;
         }
-        else {
-            return false;
-        }
-    };
-
-    while (!isFinish(x, y)) {
         var directions = this.directionToTry(originDirection);
-        _.every(directions, function(direction) {
+        for (var i = 0, l = directions.length; i < l; i++) {
+            var direction = directions[i];
             var cell = this.grid[y][x];
             if (this.isOpenSide(cell, direction)) {
                 x += Maze.dx[direction];
@@ -153,13 +155,11 @@ Maze.prototype.resolve = function() {
                 originDirection = Maze.opposite[direction];
                 this.grid[y][x] |= Maze.Breadcrumb;
                 this.render();
-                $('#content').html(this.el);
-                return false; // Break every iteration
+                break; // Break direction iteration
             }
-            return true;
-        }, this);
+        }
     }
-}
+};
 
 Maze.prototype.directionToTry = function(lastOriginDirection) {
     switch (lastOriginDirection) {
@@ -172,4 +172,8 @@ Maze.prototype.directionToTry = function(lastOriginDirection) {
         case Maze.E:
             return [Maze.N, Maze.W, Maze.S, Maze.E];
     }
-}
+};
+
+Maze.prototype.isFinish = function(x, y) {
+    return (y === (this.grid.length-1) && x === (this.grid[y].length-1));
+};
