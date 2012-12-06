@@ -2,14 +2,22 @@
 <html>
     <head>
         <title>Maze</title>
-        <link rel="stylesheet" href="style.css">
+        <link rel="stylesheet" href="style/style.css">
     </head>
     <body>
-        <input type="text" id="width" value="5">
-        <input type="text" id="height" value="5">
-        <button id="generate">Generate</button>
-        <button id="solve">Solve</button>
-        <div id="content"></div>
+        <header>
+            <input type="text" id="width" value="5">
+            <input type="text" id="height" value="5">
+            <button id="generate">Generate</button>
+            <button id="solve">Solve</button>
+        </header>
+        
+        <!-- <img id="queen" src="style/queen.png"> -->
+
+        <div id="content">
+        </div>
+
+
         <script src="jquery.js"></script>
         <script src="underscore.js"></script>
         <script src="maze.js"></script>
