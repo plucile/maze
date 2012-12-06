@@ -162,5 +162,9 @@ header button:active {
 }
 
 .bc {
+    background: rgba(255,255,255,0.7);
+}
+
+.current {
     background: rgba(255,255,255,0.9);
 }

@@ -13,6 +13,7 @@ Maze.S = 2;
 Maze.E = 4;
 Maze.W = 8;
 Maze.Breadcrumb = 16;
+Maze.Current = 32;
 Maze.List = [1, 2, 4, 8];
 Maze.dx = {
     1: 0,
@@ -32,24 +33,12 @@ Maze.opposite = {
     4: 8,
     8: 4
 };
-Maze.prototype.isNorth = function(x, y) {
-    return (this.grid[y][x] & Maze.N) === Maze.N;
-};
-Maze.prototype.isSouth = function(x, y) {
-    return (this.grid[y][x] & Maze.S) === Maze.S;
-};
-Maze.prototype.isEast = function(x, y) {
-    return (this.grid[y][x] & Maze.E) === Maze.E;
-};
-Maze.prototype.isWest = function(x, y) {
-    return (this.grid[y][x] & Maze.W) === Maze.W;
-};
 Maze.prototype.isOpenSide = function(cell, direction) {
     return (cell & direction) === direction;
 };
-Maze.prototype.isBreadcrumb = function(cell) {
-    return (cell & Maze.Breadcrumb) === Maze.Breadcrumb;
-}
+Maze.prototype.hasFlag = function(cell, flag) {
+    return (cell & flag) === flag;
+};
 
 
 Maze.prototype.initGrid = function() {
@@ -104,8 +93,11 @@ Maze.prototype.createCell = function(cell) {
     if (this.isOpenSide(cell, Maze.W)) {
         cellEl.addClass('w');
     }
-    if (this.isBreadcrumb(cell, Maze.Breadcrumb)) {
+    if (this.hasFlag(cell, Maze.Breadcrumb)) {
         cellEl.addClass('bc');
+    }
+    if (this.hasFlag(cell, Maze.Current)) {
+        cellEl.addClass('current');
     }
     return cellEl.get(0);
 };
@@ -131,34 +123,32 @@ Maze.prototype.solve = function() {
         y = 0,
         solved = 0,
         originDirection = Maze.W,
-        wd = 100;
+        that = this;
     this.grid[y][x] |= Maze.Breadcrumb;
 
-    // var isFinish = function(x, y) {
-    //     if (y !== (this.grid.length-1)) return false;
-    //     if (x !== (this.grid[y].length-1)) return false;
-    //     return true;
-    // };
-
-    while (!this.isFinish(x, y)) {
-        wd--;
-        if (wd === 0) {
-            debugger;
-        }
-        var directions = this.directionToTry(originDirection);
+    var loop = function() {
+        var directions = that.directionToTry(originDirection);
         for (var i = 0, l = directions.length; i < l; i++) {
             var direction = directions[i];
-            var cell = this.grid[y][x];
-            if (this.isOpenSide(cell, direction)) {
+            var cell = that.grid[y][x];
+            if (that.isOpenSide(cell, direction)) {
+                // Remove current flag on ald cell
+                that.grid[y][x] &= ~Maze.Current;
                 x += Maze.dx[direction];
                 y += Maze.dy[direction];
                 originDirection = Maze.opposite[direction];
-                this.grid[y][x] |= Maze.Breadcrumb;
-                this.render();
+                that.grid[y][x] |= Maze.Breadcrumb; // Mark as path
+                that.grid[y][x] |= Maze.Current; // Put current flag
+                that.render();
                 break; // Break direction iteration
             }
         }
-    }
+        if (!that.isFinish(x, y)) {
+            requestAnimFrame(loop);
+        }
+    };
+
+    loop();
 };
 
 Maze.prototype.directionToTry = function(lastOriginDirection) {
