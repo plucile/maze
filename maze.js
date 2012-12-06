@@ -131,34 +131,29 @@ Maze.prototype.solve = function() {
         y = 0,
         solved = 0,
         originDirection = Maze.W,
-        wd = 100;
+        that = this;
     this.grid[y][x] |= Maze.Breadcrumb;
 
-    // var isFinish = function(x, y) {
-    //     if (y !== (this.grid.length-1)) return false;
-    //     if (x !== (this.grid[y].length-1)) return false;
-    //     return true;
-    // };
-
-    while (!this.isFinish(x, y)) {
-        wd--;
-        if (wd === 0) {
-            debugger;
-        }
-        var directions = this.directionToTry(originDirection);
+    var loop = function() {
+        var directions = that.directionToTry(originDirection);
         for (var i = 0, l = directions.length; i < l; i++) {
             var direction = directions[i];
-            var cell = this.grid[y][x];
-            if (this.isOpenSide(cell, direction)) {
+            var cell = that.grid[y][x];
+            if (that.isOpenSide(cell, direction)) {
                 x += Maze.dx[direction];
                 y += Maze.dy[direction];
                 originDirection = Maze.opposite[direction];
-                this.grid[y][x] |= Maze.Breadcrumb;
-                this.render();
+                that.grid[y][x] |= Maze.Breadcrumb;
+                that.render();
                 break; // Break direction iteration
             }
         }
-    }
+        if (!that.isFinish(x, y)) {
+            requestAnimFrame(loop);
+        }
+    };
+
+    loop();
 };
 
 Maze.prototype.directionToTry = function(lastOriginDirection) {
