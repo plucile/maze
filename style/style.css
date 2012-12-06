@@ -1,19 +1,20 @@
 html {
     background-image: url('bg.jpg');
     background-attachment: fixed;
-    position: relative;/*
+    position: relative;
     width: 100%;
-    height: 100%;
+    height: 100%;/*
     padding: 50px 0;*/
 }
 
 body {
     background-image: url('queen.png');
     background-repeat: no-repeat;
-    background-position: bottom right;
-    width: 90%;
-    height: 90%;
+    background-position: bottom left;
+    width: 100%;
+    height: 100%;
     padding: 50px 0;
+    margin: 0;
 }
 
 * { 
@@ -33,7 +34,11 @@ header {
     box-shadow: 0 0 2px 1px #999;
     margin: 0 auto 30px;
     padding: 30px 10px;
-    width: 150px;
+    width: 300px;
+}
+
+header h1 {
+    font-family: 'Croissant One', cursive;
 }
 
 header input, 
@@ -66,6 +71,54 @@ header button:active {
    background: -o-linear-gradient(top, #eeeeee, #cccccc);
    color: #333333;
    }
+
+#solve {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}
+
+#solve img.cat {
+    cursor: pointer;
+    opacity: 0.3;
+    transition: opacity 2s 1s;
+    -moz-transition: opacity 2s 1s; /* Firefox 4 */
+    -webkit-transition: opacity 2s 1s; /* Safari and Chrome */
+    -o-transition: opacity 2s 1s; /* Opera */
+}
+
+#solve p {
+    background-image: url('text.png');
+    font-family: 'Croissant One', cursive;
+    opacity: 0;
+    position: absolute;
+    font-size: 10px;
+    height: 87px;
+    line-height: 70px;
+    vertical-align: middle;
+    width: 127px;
+    text-align: center;
+    transition: opacity 2s;
+    -moz-transition: opacity 2s; /* Firefox 4 */
+    -webkit-transition: opacity 2s; /* Safari and Chrome */
+    -o-transition: opacity 2s; /* Opera */
+}
+
+#solve:hover p {
+    opacity: 1;
+    transition: opacity 2s 1s;
+    -moz-transition: opacity 2s 1s;  /* Firefox 4 */
+    -webkit-transition: opacity 2s 1s; /* Safari and Chrome */
+    -o-transition: opacity 2s 1s; /* Opera */
+}
+
+#solve:hover img.cat {
+    opacity: 1;
+    transition: opacity 2s;
+    -moz-transition: opacity 2s; /* Firefox 4 */
+    -webkit-transition: opacity 2s; /* Safari and Chrome */
+    -o-transition: opacity 2s; /* Opera */
+}
 
 #queen {
     position: absolute;
@@ -109,5 +162,5 @@ header button:active {
 }
 
 .bc {
-    background-color: yellow;
+    background: rgba(255,255,255,0.9);
 }
