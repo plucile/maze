@@ -1,0 +1,113 @@
+html {
+    background-image: url('bg.jpg');
+    background-attachment: fixed;
+    position: relative;/*
+    width: 100%;
+    height: 100%;
+    padding: 50px 0;*/
+}
+
+body {
+    background-image: url('queen.png');
+    background-repeat: no-repeat;
+    background-position: bottom right;
+    width: 90%;
+    height: 90%;
+    padding: 50px 0;
+}
+
+* { 
+    -webkit-box-sizing: border-box; /* Safari/Chrome, other WebKit */
+    -moz-box-sizing: border-box;    /* Firefox, other Gecko */
+    box-sizing: border-box;         /* Opera/IE 8+ */
+}
+
+header {
+    margin: 0 auto;
+    text-align: center;
+    width: 90%;
+    background: rgba(255,255,255,0.9);
+    /*background-image: url('bg.gif');*/
+    background-position: center;
+    border-radius: 3px;
+    box-shadow: 0 0 2px 1px #999;
+    margin: 0 auto 30px;
+    padding: 30px 10px;
+    width: 150px;
+}
+
+header input, 
+header button {
+    display: block;
+    margin: 10px auto;
+    width: 80px;
+}
+
+header button {
+   border: 1px solid #bbbbbb;
+   background: #eeeeee;
+   background: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#dddddd));
+   background: -webkit-linear-gradient(top, #eeeeee, #dddddd);
+   background: -moz-linear-gradient(top, #eeeeee, #dddddd);
+   background: -ms-linear-gradient(top, #eeeeee, #dddddd);
+   background: -o-linear-gradient(top, #eeeeee, #dddddd);
+   padding: 4px 8px;
+   border-radius: 2px;
+   color: #333333;
+   text-decoration: none;
+   vertical-align: middle;
+   }
+header button:hover,
+header button:active {
+   background: -webkit-gradient(linear, left top, left bottom, from(#eeeeee), to(#cccccc));
+   background: -webkit-linear-gradient(top, #eeeeee, #cccccc);
+   background: -moz-linear-gradient(top, #eeeeee, #cccccc);
+   background: -ms-linear-gradient(top, #eeeeee, #cccccc);
+   background: -o-linear-gradient(top, #eeeeee, #cccccc);
+   color: #333333;
+   }
+
+#queen {
+    position: absolute;
+    bottom: 0px;
+    right: 0px;
+}
+
+#content {
+    text-align: center;
+}
+
+#grid {
+}
+
+.row {
+    line-height: 0;
+}
+
+.cell {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 1px solid green;
+    background: rgba(255,255,255,0.3);
+}
+
+.n {
+    border-top: none;
+}
+
+.s {
+    border-bottom: none;
+}
+
+.w {
+    border-left: none;
+}
+
+.e {
+    border-right: none;
+}
+
+.bc {
+    background-color: yellow;
+}
